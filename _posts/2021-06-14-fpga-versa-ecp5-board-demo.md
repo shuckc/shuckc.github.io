@@ -10,7 +10,7 @@ I used a windows machine for this walkthrough, so most of this was setting up th
 FPGA Toolchain
 ----
 
-Install fpga toolchain, I used the [YoWASP binary builds](http://yowasp.org/) by Whitequark which are distributed as... _python packages_ and installed using pip. Using a recent 3.6+ python:
+I used the [YoWASP binary builds by Whitequark](http://yowasp.org/) which are distributed as... _python packages_ and installed using pip. `Yosys` is needed for synthesis and `nextpnr-ecp5` for place and route. Using a recent 3.6+ python virtual environment:
 
     $ python -m venv venv
     $ ./venv/Scripts/activate
@@ -28,6 +28,7 @@ Set the part to be `--um-45k` not `--um5g-45k` - the package is the same, as is 
 
     $ git clone git@github.com:YosysHQ/prjtrellis.git
     $ cd prjtrellis/examples/versa5g
+    $ vi build.sh
     $ cat build.sh
     yowasp-yosys -p "synth_ecp5 -json demo.json" demo.v
     yowasp-nextpnr-ecp5 --json demo.json --lpf versa.lpf --textcfg demo_out.config --um-45k --package CABGA381
@@ -69,6 +70,8 @@ Note that the dev kit I had has a FTDI chip flashed with the USB device name `EC
 
 The prjtrellis Versa board sample configuration suggest linking the Lattice ispCLOCK chip out of the JTAG chain. This is configured by J50 on the board - link `1-2` and `3-5`, leaving `4-6` open circuit per page 6 of the [ECP5-5G Versa Development Board User Guide](https://www.latticesemi.com/-/media/LatticeSemi/Documents/UserManuals/EI2/FPGA-EB-02021-2-3-ECP5-Versa-Development-Board.ashx?document_id=50996).
 
+    $ vi ../../misc/openocd/ecp5-versa.cfg
+    ...
     $ winpty ../../../openocd-v0.11.0-i686-w64-mingw32/bin/openocd.exe -f ../../misc/openocd/ecp5-versa.cfg -c "transport select jtag; init; svf demo.svf; exit"
 	Open On-Chip Debugger 0.11.0 (2021-03-07-12:52)
 	Licensed under GNU GPL v2
@@ -86,7 +89,7 @@ The prjtrellis Versa board sample configuration suggest linking the Lattice ispC
 	...
 
 
-It works and scrolls the message. Hopefully the next post will use something more interesting than Verilog for the frontend.
+If the JTAG upload works you will see the text message scroll through the 13-seg display. Hopefully the next post will use something more interesting than Verilog for the frontend.
 
 Final diff against prjtrellis upstream was:
 
