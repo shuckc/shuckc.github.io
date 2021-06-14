@@ -54,16 +54,20 @@ Supply the dev board with 12V using the supplied AC adapter and hook up the USB 
 
 If any FTDI generic drivers are installed, remove them using the ["CDM Uninstaller" tool ](http://www.ftdichip.com/Support/Utilities/CDM_Uninst_GUI_Readme.html) and the well known USB VID 0403 PID 6010 combination.
 
+![FTDI CDM uninstaller]({{ site.baseurl }}/images/ftdi-cdm-uninstall-0403-6010-devices.png)
+
 Now use [Zadig 2.5](https://zadig.akeo.ie/) to install the WinUSB driver. You need to choose Options and make sure the option to show Composite Devices is enabled. Click the "Lattice ECP5_5G VERSA Board" *composite* device and switch the desired driver to "WinUSB (v6.1.7600.16385)", click to apply the change. Let windows refresh it's device list etc etc.
+
+![Zadig show composite devices]({{ site.baseurl }}/images/fpga-zadig-show-composite-devices.png)
 
 Grab OpenOCD from [github releases](https://github.com/ntfreak/openocd/releases). There is a windows binary package built for each tag however it is just a tar.gz so looks like a source release - I used openocd-v0.11.0-i686-w64-mingw32.tar.gz - download and unpack
 
 
 JTAG flashing
 ----
-Note that the dev kit I had has a FTDI chip flashed with the USB device name ECP5_5G, but it is only an ECP5 chip on the board. You can see the mismatch next when we enumerate the JTAG chain - so I had to set `ftdi_device_desc "Lattice ECP5_5G VERSA Board"` for OpenOCD to match the JTAG programmer.
+Note that the dev kit I had has a FTDI chip flashed with the USB device name `ECP5_5G`, but it is only an ECP5 chip on the board. You can see the mismatch next when we enumerate the JTAG chain - so I had to set `ftdi_device_desc "Lattice ECP5_5G VERSA Board"` in the OpenOCD config file for OpenOCD to find the JTAG programmer.
 
-Additionally the versa setup scripts suggest linking the Lattice ispCLOCK chip out of the JTAG chain. This is configured by J50 on the board - link `1-2` and `3-5`, leaving `4-6` open circuit per page 6 of the [ECP5-5G Versa Development Board User Guide](https://www.latticesemi.com/-/media/LatticeSemi/Documents/UserManuals/EI2/FPGA-EB-02021-2-3-ECP5-Versa-Development-Board.ashx?document_id=50996).
+The prjtrellis Versa board sample configuration suggest linking the Lattice ispCLOCK chip out of the JTAG chain. This is configured by J50 on the board - link `1-2` and `3-5`, leaving `4-6` open circuit per page 6 of the [ECP5-5G Versa Development Board User Guide](https://www.latticesemi.com/-/media/LatticeSemi/Documents/UserManuals/EI2/FPGA-EB-02021-2-3-ECP5-Versa-Development-Board.ashx?document_id=50996).
 
     $ winpty ../../../openocd-v0.11.0-i686-w64-mingw32/bin/openocd.exe -f ../../misc/openocd/ecp5-versa.cfg -c "transport select jtag; init; svf demo.svf; exit"
 	Open On-Chip Debugger 0.11.0 (2021-03-07-12:52)
