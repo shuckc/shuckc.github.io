@@ -1,17 +1,16 @@
 ---
 layout: post
-title: Bringing up ECP5 Versa Dev Kit with Yosys, nextpnr
+title: Bringing up ECP5 Versa with open tools
 ---
 
-Specifically the Lattice Dev Kit with part number LFE5UM-45F-VERSA-EVN
-Using the example design from https://github.com/YosysHQ/prjtrellis/tree/master/examples/versa5g which is for a slightly different board.
+Specifically the Lattice ECP5 FPGA Versa Dev Kit with part number `LFE5UM-45F-VERSA-EVN` which is ever so slightly different from the prjtrellis example [versa5g design](https://github.com/YosysHQ/prjtrellis/tree/master/examples/versa5g) as it has a previous iteration of the FPGA.
 
-I used a windows machine for this walkthrough, so part of this was to setup the host USB stack ready for OpenOCD.
+I used a windows machine for this walkthrough, so most of this was setting up the host USB stack ready for OpenOCD.
 
 FPGA Toolchain
 ----
 
-Install fpga toolchain, I used the binary build by Whitequark called "yowasp" which is distributed as ... python packages installed using pip. Using a recent 3.6+ python:
+Install fpga toolchain, I used the [YoWASP binary builds](http://yowasp.org/) by Whitequark which are distributed as... _python packages_ and installed using pip. Using a recent 3.6+ python:
 
     $ python -m venv venv
     $ ./venv/Scripts/activate
@@ -53,11 +52,11 @@ WinUSB Driver setup
 ----
 Supply the dev board with 12V using the supplied AC adapter and hook up the USB cable.
 
-If any FTDI generic drivers are installed, remove them using the "CDM Uninstaller" tool http://www.ftdichip.com/Support/Utilities/CDM_Uninst_GUI_Readme.html and the well known USB VID 0403 PID 6010 combination.
+If any FTDI generic drivers are installed, remove them using the ["CDM Uninstaller" tool ](http://www.ftdichip.com/Support/Utilities/CDM_Uninst_GUI_Readme.html) and the well known USB VID 0403 PID 6010 combination.
 
-Now use Zadig 2.5 https://zadig.akeo.ie/ to install the WinUSB driver. You need to choose Options and make sure the option to show Composite Devices is enabled. Click the "Lattice ECP5_5G VERSA Board" *composite* device and switch the desired driver to "WinUSB (v6.1.7600.16385)", click to apply the change. Let windows refresh it's device list etc etc.
+Now use [Zadig 2.5](https://zadig.akeo.ie/) to install the WinUSB driver. You need to choose Options and make sure the option to show Composite Devices is enabled. Click the "Lattice ECP5_5G VERSA Board" *composite* device and switch the desired driver to "WinUSB (v6.1.7600.16385)", click to apply the change. Let windows refresh it's device list etc etc.
 
-Grab OpenOCD from github releases https://github.com/ntfreak/openocd/releases. There is a windows binary package built for each tag however it is just a tar.gz so looks like a source release - I used openocd-v0.11.0-i686-w64-mingw32.tar.gz - download and unpack
+Grab OpenOCD from [github releases](https://github.com/ntfreak/openocd/releases). There is a windows binary package built for each tag however it is just a tar.gz so looks like a source release - I used openocd-v0.11.0-i686-w64-mingw32.tar.gz - download and unpack
 
 
 JTAG flashing
