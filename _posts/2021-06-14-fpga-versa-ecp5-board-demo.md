@@ -64,11 +64,26 @@ Now use [Zadig 2.5](https://zadig.akeo.ie/) to install the WinUSB driver. You ne
 Grab OpenOCD from [github releases](https://github.com/ntfreak/openocd/releases). There is a windows binary package built for each tag however it is just a tar.gz so looks like a source release - I used openocd-v0.11.0-i686-w64-mingw32.tar.gz - download and unpack
 
 
-JTAG flashing
+Double Check dev board USB name!
 ----
-Note that the dev kit I had has a FTDI chip flashed with the USB device name `ECP5_5G`, but it is only an ECP5 chip on the board. You can see the mismatch next when we enumerate the JTAG chain - so I had to set `ftdi_device_desc "Lattice ECP5_5G VERSA Board"` in the OpenOCD config file for OpenOCD to find the JTAG programmer.
+The dev kit I recieved had the FTDI chip programmed to show USB device name `ECP5_5G`, but it is only an `ECP5` chip populated on the board. The silkscreen label has also been modified with a marker pen to mask `5G`. Perhaps delays with the 5G parts meant Lattice had to fit older parts to an early run of the boards.
 
-The prjtrellis Versa board sample configuration suggest linking the Lattice ispCLOCK chip out of the JTAG chain. This is configured by J50 on the board - link `1-2` and `3-5`, leaving `4-6` open circuit per page 6 of the [ECP5-5G Versa Development Board User Guide](https://www.latticesemi.com/-/media/LatticeSemi/Documents/UserManuals/EI2/FPGA-EB-02021-2-3-ECP5-Versa-Development-Board.ashx?document_id=50996).
+You can see the mismatch next when we enumerate the JTAG chain - so I had to set `ftdi_device_desc "Lattice ECP5_5G VERSA Board"` in the OpenOCD config file for OpenOCD to find the JTAG programmer. You will need to check that the IDCODE of the chip comes back as expected.
+
+
+Link out JTAG Scan chain for ispCLOCK chip
+---
+The prjtrellis Versa board sample configuration suggests linking the Lattice ispCLOCK chip out of the JTAG chain. Supposidly the chips JTAG engine is unreliable when in the chain.
+
+This is configured by J50 on the board - link `1-2` and `3-5`, leaving `4-6` open circuit per page 6 of the [ECP5-5G Versa Development Board User Guide](https://www.latticesemi.com/-/media/LatticeSemi/Documents/UserManuals/EI2/FPGA-EB-02021-2-3-ECP5-Versa-Development-Board.ashx?document_id=50996).
+
+
+![Versa JTAG chain jumper settings]({{ site.baseurl }}/images/fpga-versa-jtag-patch-jumper-settings.png)
+
+If you do not patch out the ispCLOCK chip, [uncomment Line 16 in `prjtrellis/misc/openocd/ecp5-versa.cfg`]( https://github.com/YosysHQ/prjtrellis/blob/master/misc/openocd/ecp5-versa.cfg#L16) to include the ispClock device.
+
+Push bitstream over JTAP
+----
 
     $ vi ../../misc/openocd/ecp5-versa.cfg
     ...
