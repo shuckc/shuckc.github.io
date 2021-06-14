@@ -3,7 +3,7 @@ layout: post
 title: Testing minio redis notifications
 ---
 
-Documented at https://docs.min.io/docs/minio-bucket-notification-guide.html "Publish MinIO events via Redis"
+Documented at [docs.min.io](https://docs.min.io/docs/minio-bucket-notification-guide.html) "Publish MinIO events via Redis"
 
 Terminal 1 runs up local redis, enables password, binds to all if
 
