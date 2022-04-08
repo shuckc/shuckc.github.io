@@ -1,4 +1,4 @@
-baseURL = 'http://shucksmith.uk/'
+baseURL = 'https://shucksmith.uk/'
 languageCode = 'en-uk'
 title = 'Tea Engineering Blog'
 theme = 'cactus'
