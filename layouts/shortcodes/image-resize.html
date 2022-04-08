@@ -1,0 +1,11 @@
+{{ $imagename := (.Get 0) }}
+{{ $options := .Get 1 }}
+XYZ {{ $imagename }}
+{{ with .Site.GetPage "section" "media" }}
+  with section
+  {{ $original := .Resources.GetByPrefix  $imagename }}
+  {{ with ($original.Resize $options) }}
+  resized
+  <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}">
+  {{ end }} 
+{{ end }}

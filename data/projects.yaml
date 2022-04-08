@@ -1,0 +1,24 @@
+{
+   "list": [
+      {
+         "name":"libchronicle",
+         "url":"https://github.com/TeaEngineering/libchronicle",
+         "desc":"Shared-memory communication using OpenHFT's chronicle-queue in C"
+      },
+      {
+         "name":"pialarm",
+         "url":"https://github.com/shuckc/pialarm",
+         "desc":"Reverse engineering the Texecom alarm pannel Wintex protocol"
+      },
+      {
+         "name":"govee_logger",
+         "url":"https://github.com/shuckc/govee_logger",
+         "desc":"Reverse engineered Govee bluetooth temp/humidity logger"
+      },
+      {
+         "name":"django-ordered-model",
+         "url":"https://github.com/django-ordered-model/django-ordered-model",
+         "desc":"a Django plugin I help maintain (badly)"
+      }
+   ]
+}
