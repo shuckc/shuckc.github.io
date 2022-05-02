@@ -52,13 +52,14 @@ Set the part to be `--um-45k` not `--um5g-45k` - the package is the same, as is 
 	...
 	$
 
-This should produce a huge `demo.svf` programming file ready to send to the device
+This should produce a huge `demo.svf` programming file ready to send to the device.
+
+Supply the dev board with 12V using the supplied AC adapter and hook up the USB cable.
 
 Now for the fun part - Windows USB & JTAG flashing.
 
 WinUSB Driver setup
 ----
-Supply the dev board with 12V using the supplied AC adapter and hook up the USB cable.
 
 If any FTDI generic drivers are installed, remove them using the ["CDM Uninstaller" tool](http://www.ftdichip.com/Support/Utilities/CDM_Uninst_GUI_Readme.html) and the well known USB VID 0403 PID 6010 combination.
 
@@ -76,6 +77,37 @@ Double Check dev board USB name!
 The dev kit I recieved had the FTDI chip programmed to show USB device name `ECP5_5G`, but it is only an `ECP5` chip populated on the board. The silkscreen label has also been modified with a marker pen to mask `5G`. Perhaps delays with the 5G parts meant Lattice had to fit older parts to an early run of the boards.
 
 You can see the mismatch next when we enumerate the JTAG chain - so I had to set `ftdi_device_desc "Lattice ECP5_5G VERSA Board"` in the OpenOCD config file for OpenOCD to find the JTAG programmer. You will need to check that the IDCODE of the chip comes back as expected.
+
+Resulting diff against prjtrellis upstream was:
+
+	$ git diff
+	diff --git a/examples/versa5g/Makefile b/examples/versa5g/Makefile
+	index 862aa8a..9f12ae2 100644
+	--- a/examples/versa5g/Makefile
+	+++ b/examples/versa5g/Makefile
+	@@ -11,7 +11,7 @@ pattern.vh: make_14seg.py text.in
+	        yosys -p "synth_ecp5 -json $@" $<
+
+	 %_out.config: %.json
+	-       nextpnr-ecp5 --json $< --lpf ${CONSTR} --textcfg $@ --um5g-45k --package CABGA381
+	+       nextpnr-ecp5 --json $< --lpf ${CONSTR} --textcfg $@ --um-45k --package CABGA381
+
+	 %.bit: %_out.config
+	        ecppack --svf-rowsize 100000 --svf ${PROJ}.svf $< $@
+	diff --git a/misc/openocd/ecp5-versa.cfg b/misc/openocd/ecp5-versa.cfg
+	index 4958627..219090c 100644
+	--- a/misc/openocd/ecp5-versa.cfg
+	+++ b/misc/openocd/ecp5-versa.cfg
+	@@ -1,7 +1,7 @@
+	 # this supports ECP5 Versa board
+
+	 interface ftdi
+	-ftdi_device_desc "Lattice ECP5 Versa Board"
+	+ftdi_device_desc "Lattice ECP5_5G VERSA Board"
+	 ftdi_vid_pid 0x0403 0x6010
+	 # channel 1 does not have any functionality
+	 ftdi_channel 0
+
 
 
 Link out JTAG Scan chain for ispCLOCK chip
@@ -111,37 +143,4 @@ Push bitstream over JTAG
 	...
 
 
-If the JTAG upload works you will see the text message scroll through the 13-seg display. Hopefully the next post will use something more interesting than Verilog for the frontend.
-
-Final diff against prjtrellis upstream was:
-
-	$ git diff
-	diff --git a/examples/versa5g/Makefile b/examples/versa5g/Makefile
-	index 862aa8a..9f12ae2 100644
-	--- a/examples/versa5g/Makefile
-	+++ b/examples/versa5g/Makefile
-	@@ -11,7 +11,7 @@ pattern.vh: make_14seg.py text.in
-	        yosys -p "synth_ecp5 -json $@" $<
-
-	 %_out.config: %.json
-	-       nextpnr-ecp5 --json $< --lpf ${CONSTR} --textcfg $@ --um5g-45k --package CABGA381
-	+       nextpnr-ecp5 --json $< --lpf ${CONSTR} --textcfg $@ --um-45k --package CABGA381
-
-	 %.bit: %_out.config
-	        ecppack --svf-rowsize 100000 --svf ${PROJ}.svf $< $@
-	diff --git a/misc/openocd/ecp5-versa.cfg b/misc/openocd/ecp5-versa.cfg
-	index 4958627..219090c 100644
-	--- a/misc/openocd/ecp5-versa.cfg
-	+++ b/misc/openocd/ecp5-versa.cfg
-	@@ -1,7 +1,7 @@
-	 # this supports ECP5 Versa board
-
-	 interface ftdi
-	-ftdi_device_desc "Lattice ECP5 Versa Board"
-	+ftdi_device_desc "Lattice ECP5_5G VERSA Board"
-	 ftdi_vid_pid 0x0403 0x6010
-	 # channel 1 does not have any functionality
-	 ftdi_channel 0
-
-
-
+If the JTAG upload works you will see the text message scroll through the 13-seg display.
